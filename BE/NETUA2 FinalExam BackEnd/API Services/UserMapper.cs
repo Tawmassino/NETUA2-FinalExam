@@ -1,6 +1,6 @@
 ﻿using FE_BE._DATA.Entities;
 using NETUA2_FinalExam_BackEnd.API_Services.API_Interfaces;
-using NETUA2_FinalExam_BackEnd.DTOs;
+using NETUA2_FinalExam_BackEnd.DTOs.UserDTOs;
 
 namespace NETUA2_FinalExam_BackEnd.API_Services
 {
@@ -59,11 +59,11 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
         {
             var entity = new UserGetDTO
             {
-                Id = user.Id,
+                //Id = user.Id,
                 Username = user.Username,
-                Email = user.Email,
+                //Email = user.Email,
                 //Password = user.Password, <- password is sensitive information and is not sent via DTOs
-                Role = user.Role,
+                //Role = user.Role,
             };
             return entity;
         }

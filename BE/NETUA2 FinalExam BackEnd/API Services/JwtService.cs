@@ -9,17 +9,18 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
     public class JwtService : IJwtService
     {
         private readonly IConfiguration _configuration;
-        public JwtService(IConfiguration configuration)//get configuration from jwt information in appsetings file
+        public JwtService(IConfiguration configuration)//Get configuration from jwt information in appsetings file
         {
             _configuration = configuration;
         }
 
-        public string GetJwtToken(string username, string role)
+        public string GetJwtToken(string username, string role, int userId)
         {
             var claims = new List<Claim>
-            {//name can be string with any name instead of "ClaimTypes.Name"
+            {//Name can be string with any name instead of "ClaimTypes.Name"
                 new Claim(ClaimTypes.Name, username),
-                new Claim(ClaimTypes.Role, role)
+                new Claim(ClaimTypes.Role, role),
+                new Claim(ClaimTypes.NameIdentifier, Convert.ToString(userId))// i claims tik stringais
             };
 
             var secretKey = _configuration.GetSection("Jwt:Key").Value;
@@ -27,9 +28,9 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
             var audience = _configuration.GetSection("Jwt:Audience").Value;
 
             //issuing the jwt 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));//converting utf string to byte [] 
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));//Converting utf string to byte [] 
             //jwt hash algorythm - credentials
-            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
 
 
             //generating a token

@@ -1,4 +1,6 @@
-﻿namespace NETUA2_FinalExam_BackEnd.DTOs
+﻿using NETUA2_FinalExam_BackEnd.DTOs.UserDTOs;
+
+namespace NETUA2_FinalExam_BackEnd.DTOs
 {
     public class LoginResponse : UserResponse
     {

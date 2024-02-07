@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,13 @@ namespace FE_BE._DATA.Entities
         public string StreetName { get; set; }
         public int HouseNumber { get; set; }
         public string Country { get; set; }
+
+
+        //SITAS TURI SIETIS SU PERSON
+        [ForeignKey(nameof(User))]
+        public int UserId { get; set; }
+        public User User { get; set; }
+
 
 
     }

@@ -17,19 +17,25 @@ namespace FE_BE._DATA.Entities
         public string PhoneNumber { get; set; }
         public string? Email { get; set; }
 
-        public string Location { get; set; }
+        //public string Location { get; set; }
 
 
 
-        //[ForeignKey(nameof(User))]
-        //yra sarysis is user puses
-        //public int UserId { get; set; }//foreign key to user table, atskiras stulpelis, pasako KURI  useri
-        //public User User { get; set; }//cia pasakome kad yra  User tipo lentele, cia ne stuleplis, CIA DEL MUSU PATOGUMO, neegzistuoja DB, nuorodoa KAIP uzkrauti useri
+        [ForeignKey(nameof(User))]
+        //yra sarysis is user puses, cia nerikia
+        public int UserId { get; set; }//foreign key to user table, atskiras stulpelis, pasako KURI  useri
+        public User User { get; set; }//cia pasakome kad yra  User tipo lentele, cia ne stuleplis, CIA DEL MUSU PATOGUMO, neegzistuoja DB, nuorodoa KAIP uzkrauti useri
         //amzinas ciklas
 
 
         [ForeignKey(nameof(LivingLocation))]
         public int? UserLocationId { get; set; }//nurodo foreign key i user lentele, atskiras stulpelis, pasako KURI  useri
         public LivingLocation? LivingLocation { get; set; }//cia pasakome kad yra  User tipo lentele, cia ne stuleplis, CIA DEL MUSU PATOGUMO, neegzistuoja DB, nuorodoa KAIP uzkrauti useri
+
+
+        [ForeignKey(nameof(ProfilePicture))]
+        public int? ProfilePictureId { get; set; }
+        public ImageFile? ProfilePicture { get; set; }
+
     }
 }

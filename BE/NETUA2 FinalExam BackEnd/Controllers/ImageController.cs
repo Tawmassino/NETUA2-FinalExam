@@ -91,7 +91,7 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
             var originalImage = Image.FromStream(memoryStream);
 
             // Create a thumbnail
-            var thumbnailWidth = 100; //set width
+            var thumbnailWidth = 200; //set width
             var thumbnailHeight = (int)((double)originalImage.Height / originalImage.Width * thumbnailWidth);
 
             using var thumbnail = new Bitmap(thumbnailWidth, thumbnailHeight);

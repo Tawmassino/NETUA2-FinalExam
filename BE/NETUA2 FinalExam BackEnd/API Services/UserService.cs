@@ -1,8 +1,9 @@
 ﻿using Azure.Core;
 using FE_BE._DATA.DB_Interfaces;
+using FE_BE._DATA.DB_Repositories;
 using FE_BE._DATA.Entities;
 using NETUA2_FinalExam_BackEnd.API_Services.API_Interfaces;
-using NETUA2_FinalExam_BackEnd.DTOs;
+using NETUA2_FinalExam_BackEnd.DTOs.UserDTOs;
 using System.Security.Claims;
 using System.Security.Cryptography;
 
@@ -13,15 +14,18 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUserDBRepository _userDBRepository;
         private readonly ILogger<UserService> _logger;
+        private readonly IJwtService _jwtService;
 
         public UserService(
             IHttpContextAccessor httpContextAccessor,
             IUserDBRepository userDBRepository,
-            ILogger<UserService> logger)
+            ILogger<UserService> logger,
+            IJwtService jwtService)
         {
             _httpContextAccessor = httpContextAccessor;
             _userDBRepository = userDBRepository;
             _logger = logger;
+            _jwtService = jwtService;
         }
 
         // ==================== methods ====================
@@ -33,23 +37,29 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
             return int.Parse(userId);
         }
 
-        public UserResponse Login(string username, string password, out string role)
+        public (bool, User) Login(string username, string password, out string role)//UserResponse graziname tik controller, cia to nereikia
         {
+            //tuple - su bool ir useriu          
             var user = _userDBRepository.GetUserByUsername(username);
-            role = user.Role;
+            var userId = user.Id;
+
+            role = user?.Role;
             if (user == null)
             {
                 _logger.LogWarning($"Username or password does not match");
-                return new UserResponse(false, "Username or password does not match");
+                return (false, null);
             };
 
             if (!VerifyPasswordHash(password, user.Password, user.PasswordSalt))
             {
-                _logger.LogWarning($"Username or password does not match");
-                return new UserResponse(false, "Username or password does not match");
+                _logger.LogWarning($"Incorrect password for user: {username}");
+                return (false, null);
             }
-            _logger.LogInformation($"User logged in");
-            return new UserResponse(true, "User logged in");
+            _logger.LogInformation($"User logged in: {username}");
+            //var jwt = _jwtService.GetJwtToken(user.Username, user.Role, user.Id);
+            //turetu grazint nullable user, jei pavyko, jei nepavyko null
+            //
+            return (true, user); ;
         }
 
         public UserResponse Register(string username, string password, string email)
@@ -104,3 +114,31 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
         }
     }
 }
+
+// ========================= OBSOLETE =============
+//public UserResponse Login(string username, string password, out string role)//UserResponse graziname tik controller, cia to nereikia
+//{
+
+//    //tuple - su bool ir useriu
+//    //(bool,User)Login(string username, string password, out string role)
+
+//    var user = _userDBRepository.GetUserByUsername(username);
+//    var userId = user.Id;
+
+//    role = user?.Role;
+//    if (user == null)
+//    {
+//        _logger.LogWarning($"Username or password does not match");
+//        return new UserResponse(false, "Username or password does not match");
+//    };
+
+//    if (!VerifyPasswordHash(password, user.Password, user.PasswordSalt))
+//    {
+//        _logger.LogWarning($"Username or password does not match");
+//        return new UserResponse(false, "Username or password does not match");
+//    }
+//    _logger.LogInformation($"User logged in");
+//    //var jwt = _jwtService.GetJwtToken(user.Username, user.Role, user.Id);
+//    //turetu grazint nullable user, jei pavyko, jei nepavyko null
+//    return new UserResponse(true, "User logged in", userId);
+//}

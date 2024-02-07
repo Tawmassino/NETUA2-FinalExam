@@ -10,6 +10,7 @@ using FE_BE._DATA.DB_Repositories;
 using Microsoft.Extensions.Configuration;
 using FE_BE._DATA;
 using Microsoft.EntityFrameworkCore;
+using FE_BE._DATA.DB_Repositories.DB_Interfaces;
 
 namespace NETUA2_FinalExam_BackEnd
 {
@@ -21,18 +22,20 @@ namespace NETUA2_FinalExam_BackEnd
 
             // Add services to the container.
             builder.Services.AddTransient<IJwtService, JwtService>();
-            builder.Services.AddScoped<IUserDBRepository, UserDBRepository>();//Repositories should be scoped
-            builder.Services.AddScoped<IUserService, UserService>();//Update method should be scoped
             builder.Services.AddTransient<IUserMapper, UserMapper>();
+            builder.Services.AddScoped<IUserDBRepository, UserDBRepository>();//Repositories should be scoped
+            builder.Services.AddScoped<IUserService, UserService>();//Update method should be scoped            
+            builder.Services.AddScoped<IImageRepository, ImageRepository>();//Repositories should be scoped
+            builder.Services.AddScoped<IPersonRepository, PersonRepository>();//Repositories should be scoped
+
 
             builder.Services.AddDbContext<FinalExamDbContext>(options =>
             {
-                //sql lite - ne tik ant windows
-
+                //sql lite - would work not only on windowsOS
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
-
+            //Authentication using JWTToken
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)//Auth schema is what jwt says it is.
                .AddJwtBearer(
                options =>
@@ -50,7 +53,7 @@ namespace NETUA2_FinalExam_BackEnd
                        IssuerSigningKey = key
                    };
                });
-
+            //For getting currently logged-in User ID
             builder.Services.AddHttpContextAccessor();
 
             builder.Services.AddControllers();
@@ -84,7 +87,7 @@ namespace NETUA2_FinalExam_BackEnd
 
             app.UseHttpsRedirection();
 
-            //bypass internet browser security against homemade backend?
+            //Bypass internet browser security against homemade backend?
             app.UseCors(builder =>
             {
                 builder
@@ -93,7 +96,7 @@ namespace NETUA2_FinalExam_BackEnd
                 .AllowAnyHeader();
             });
 
-
+            //User is first Authenticated and then given authorization
             app.UseAuthentication();
             app.UseAuthorization();
 

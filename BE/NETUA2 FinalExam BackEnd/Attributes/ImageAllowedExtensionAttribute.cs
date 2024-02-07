@@ -13,7 +13,7 @@ namespace NETUA2_FinalExam_BackEnd.Attributes
 
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
-            if (value is FormFile file)
+            if (value is IFormFile file)
             {
                 var extension = Path.GetExtension(file.FileName);
                 if (!_allowedImageExtensions.Contains(extension))

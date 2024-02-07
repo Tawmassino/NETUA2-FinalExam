@@ -16,11 +16,11 @@ namespace FE_BE._DATA.Entities
         public byte[] Password { get; set; }
         public byte[] PasswordSalt { get; set; }
 
-        public string? Role { get; set; }
+        public string Role { get; set; }// = "User";
 
 
-        [ForeignKey(nameof(Person))]
-        public int? PersonId { get; set; }//atskiras stulpelis, pasako KURI person
-        public Person? Person { get; set; }//cia pasakome kad yra Person tipo lentele, cia ne stuleplis, CIA DEL MUSU PATOGUMO, neegzistuoja DB, nuorodoa KAIP uzkrauti useri
+        //[ForeignKey(nameof(Person))]
+        //public int? PersonId { get; set; }//atskiras stulpelis, pasako KURI person
+        //public Person? Person { get; set; }//cia pasakome kad yra Person tipo lentele, cia ne stuleplis, CIA DEL MUSU PATOGUMO, neegzistuoja DB, nuorodoa KAIP uzkrauti useri
     }
 }

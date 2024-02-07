@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NETUA2_FinalExam_BackEnd.API_Services.API_Interfaces;
 using NETUA2_FinalExam_BackEnd.DTOs;
+using NETUA2_FinalExam_BackEnd.DTOs.UserDTOs;
 using System.Net.Mime;
 
 
@@ -35,25 +36,30 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         /// <response code="400">Model validation error</response>
         /// <response code="500">System error</response>
         [HttpPost("Login")]
+        [Route("/prisijungimas")]//cia keicia linka, paziuret spargalkes imagecontroller
         [Consumes(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        //[ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult Login(UserGetDTO request)
-        {
-            _logger.LogInformation($"Login attempt for {request.Username}");
-            var response = _userService.Login(request.Username, request.Password, out string role);
+        {// Only username and password are needed
 
-            if (!response.IsSuccess)
+            _logger.LogInformation($"Login attempt for {request.Username}");
+
+            var (loginResult, User) = _userService.Login(request.Username, request.Password, out string role);//trint role?
+
+            if (loginResult = false)
             {
                 _logger.LogWarning($"User {request.Username} not found");
-                return BadRequest(response);
+                return BadRequest("Invalid username or password");
             }
+
+            //Generating JWT in the controller
+            var jwtToken = _jwtService.GetJwtToken(request.Username, role, User.Id); //neturi DTO buti id //problema: grazina 0
 
             _logger.LogInformation($"User {request.Username} successfully logged in");
 
-            var jwtToken = _jwtService.GetJwtToken(request.Username, role);
-            return Ok(jwtToken);
+            return Ok(new UserResponse(true, "User logged in", jwtToken, User.Id));
         }
 
         /// <summary>
@@ -80,7 +86,7 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{id:guid}")]
+        [HttpDelete("{id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Delete(int id)
