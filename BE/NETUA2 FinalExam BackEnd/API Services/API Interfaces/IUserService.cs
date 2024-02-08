@@ -11,5 +11,6 @@ namespace NETUA2_FinalExam_BackEnd.API_Services.API_Interfaces
 
         void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt);
         bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt);
+        Person CreateNewPerson(int userId);
     }
 }

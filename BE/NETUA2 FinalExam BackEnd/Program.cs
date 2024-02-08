@@ -27,6 +27,8 @@ namespace NETUA2_FinalExam_BackEnd
             builder.Services.AddScoped<IUserService, UserService>();//Update method should be scoped            
             builder.Services.AddScoped<IImageRepository, ImageRepository>();//Repositories should be scoped
             builder.Services.AddScoped<IPersonRepository, PersonRepository>();//Repositories should be scoped
+            builder.Services.AddScoped<ILivingLocationRepository, LivingLocationRepository>();//Repositories should be scoped
+
 
 
             builder.Services.AddDbContext<FinalExamDbContext>(options =>

@@ -1,7 +1,9 @@
 ﻿using Azure.Core;
 using FE_BE._DATA.DB_Interfaces;
 using FE_BE._DATA.DB_Repositories;
+using FE_BE._DATA.DB_Repositories.DB_Interfaces;
 using FE_BE._DATA.Entities;
+using Microsoft.EntityFrameworkCore;
 using NETUA2_FinalExam_BackEnd.API_Services.API_Interfaces;
 using NETUA2_FinalExam_BackEnd.DTOs.UserDTOs;
 using System.Security.Claims;
@@ -15,17 +17,22 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
         private readonly IUserDBRepository _userDBRepository;
         private readonly ILogger<UserService> _logger;
         private readonly IJwtService _jwtService;
+        private readonly IPersonRepository _personRepository;//galima
+        //location repo
+
 
         public UserService(
             IHttpContextAccessor httpContextAccessor,
             IUserDBRepository userDBRepository,
             ILogger<UserService> logger,
-            IJwtService jwtService)
+            IJwtService jwtService,
+            IPersonRepository personRepository)
         {
             _httpContextAccessor = httpContextAccessor;
             _userDBRepository = userDBRepository;
             _logger = logger;
             _jwtService = jwtService;
+            _personRepository = personRepository;
         }
 
         // ==================== methods ====================
@@ -56,9 +63,7 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
                 return (false, null);
             }
             _logger.LogInformation($"User logged in: {username}");
-            //var jwt = _jwtService.GetJwtToken(user.Username, user.Role, user.Id);
-            //turetu grazint nullable user, jei pavyko, jei nepavyko null
-            //
+            //var jwt = _jwtService.GetJwtToken(user.Username, user.Role, user.Id);            
             return (true, user); ;
         }
 
@@ -77,7 +82,7 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
             return new UserResponse(true, message);
         }
 
-        private User CreateUser(string username, string password, string email)
+        internal User CreateUser(string username, string password, string email)
         {
             CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
             var user = new User
@@ -92,9 +97,37 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
             return user;
         }
 
+
+        //create person
+        public Person CreateNewPerson(int userId)
+        {
+            _logger.LogInformation($"Creating a person with ID: {userId}");
+            Person newPerson = (new Person
+            {
+                Name = "",
+                Surname = "",
+                SocialSecurityNumber = "",
+                PhoneNumber = "",
+                Email = "",
+                UserId = userId,
+                //UserLocationId = null,
+                ProfilePictureId = null,
+            });
+
+            _logger.LogInformation($"Person with ID: {userId} has been successfully created.");
+            return newPerson;
+        }
+
+        //create location
+
+
+
         public void DeleteUser(int userId)
         {
             _userDBRepository.DeleteUser(userId);
+            _personRepository.DeletePersonById(userId);
+            //delete location
+            //delete image
         }
 
         // ==================== password hash verification ====================

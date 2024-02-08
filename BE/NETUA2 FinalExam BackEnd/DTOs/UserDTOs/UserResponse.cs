@@ -2,7 +2,7 @@
 {
     public class UserResponse
     {
-        public int UserId { get; set; }//cia meta default int - 0, reiketu jog login servise butu kazkas
+        public int UserId { get; set; }
         public bool IsSuccess { get; set; }
         public string Message { get; set; }
         public string Jwt { get; set; }

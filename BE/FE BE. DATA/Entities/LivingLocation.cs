@@ -16,10 +16,10 @@ namespace FE_BE._DATA.Entities
         public string Country { get; set; }
 
 
-        //SITAS TURI SIETIS SU PERSON
-        [ForeignKey(nameof(User))]
-        public int UserId { get; set; }
-        public User User { get; set; }
+
+        [ForeignKey(nameof(Person))]
+        public int PersonId { get; set; }
+        public Person Person { get; set; }
 
 
 

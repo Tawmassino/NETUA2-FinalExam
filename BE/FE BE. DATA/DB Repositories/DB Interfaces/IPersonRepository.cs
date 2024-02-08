@@ -10,13 +10,13 @@ namespace FE_BE._DATA.DB_Repositories.DB_Interfaces
     public interface IPersonRepository
     {
 
-        Person CreateNewPerson(int userId);
+        int AddNewPerson(Person person);
 
         Person GetPersonByUserId(int userId);
+        Person GetPersonByPersonId(int personId);
 
         void UpdatePerson(Person person);
 
         void DeletePersonById(int userId);
-        Person GetPersonByPersonId(int personId);
     }
 }

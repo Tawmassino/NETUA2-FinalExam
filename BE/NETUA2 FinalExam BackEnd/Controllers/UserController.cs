@@ -1,4 +1,5 @@
 ﻿using FE_BE._DATA.DB_Interfaces;
+using FE_BE._DATA.DB_Repositories.DB_Interfaces;
 using FE_BE._DATA.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,13 +22,15 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         private readonly IJwtService _jwtService;
         //private readonly IUserMapper _userMapper;
         private readonly IUserDBRepository _userDBRepository;
+        private readonly IPersonRepository _personRepository;
 
-        public UserController(ILogger<UserController> logger, IUserService userService, IJwtService jwtService, IUserDBRepository userDBRepository)
+        public UserController(ILogger<UserController> logger, IUserService userService, IJwtService jwtService, IUserDBRepository userDBRepository, IPersonRepository personRepository)
         {
             _logger = logger;
             _userService = userService;
             _jwtService = jwtService;
             _userDBRepository = userDBRepository;
+            _personRepository = personRepository;
         }
 
         /// <summary>
@@ -63,7 +66,7 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         }
 
         /// <summary>
-        ///  create a user account
+        /// create a user account
         /// </summary>
         /// <param name="request"></param>
         /// <response code="500">System error</response>
@@ -76,6 +79,10 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
             {
                 return BadRequest(response.Message);
             }
+
+            var newPerson = _userService.CreateNewPerson(response.UserId);
+            _personRepository.AddNewPerson(newPerson);//repo is kontroleriu nekviesti !!!
+
             return Ok();
         }
 

@@ -33,6 +33,11 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
 
 
         // ======================= METHODS =======================
+        /// <summary>
+        /// Gets a person from current user.
+        /// </summary>
+        /// <param></param>
+        /// <returns></returns>
 
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(Person), StatusCodes.Status200OK)]
@@ -48,7 +53,7 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         /// <summary>
         /// remove a person account.
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="personId"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -66,6 +71,10 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
 
         }
 
+        // POST create new person
+
+
+
         // ===================================== UPDATING USER =====================================
         //CANNOT UPDATE TO EMPTY OR WHITEPSACE     
         //implement validation logic!! 
@@ -77,7 +86,12 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces(MediaTypeNames.Application.Json)]
         [Consumes(MediaTypeNames.Multipart.FormData)]//duomenys is formos
-        public IActionResult UpdatePersonSurname([FromRoute] int personId, [FromForm] string personName)
+        public IActionResult UpdatePersonName
+            ([FromRoute] int personId,
+            [FromForm] [Required(ErrorMessage = "Name is required.")]//required uztenka
+            [RegularExpression(@"^[^\s]+$", ErrorMessage = "Name cannot be empty or whitespace.")]//gali nebuti
+            string personName
+            )
         {
             _logger.LogInformation($"Updating {nameof(personName)} details to {personName} for user (id: {personId})");
             var entity = _personRepository.GetPersonByPersonId(personId);
@@ -100,7 +114,13 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces(MediaTypeNames.Application.Json)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public IActionResult UpdatePersonSurname2([FromRoute] int personId, [FromForm][StringLength(30, MinimumLength = 3)] string surname)
+        public IActionResult UpdatePersonSurname
+            ([FromRoute] int personId,
+            [FromForm][Required(ErrorMessage = "Surname is required.")]
+            [RegularExpression(@"^[^\s]+$", ErrorMessage = "Surname cannot be empty or whitespace.")]
+            [StringLength(30, MinimumLength = 3, ErrorMessage = "Surname must be between 3 and 30 characters.")]
+            string surname
+            )
         {
             _logger.LogInformation($"Updating {nameof(surname)} details to {surname} for user (id: {personId})");
 
@@ -125,7 +145,10 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces(MediaTypeNames.Application.Json)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public IActionResult UpdatePersonSocSecNumber([FromRoute] int personId, [FromForm] string socSecNumber)
+        public IActionResult UpdatePersonSocSecNumber
+            ([FromRoute] int personId,
+            [FromForm] string socSecNumber
+            )
         {
             _logger.LogInformation($"Updating {nameof(socSecNumber)} details to {socSecNumber} for user (id: {personId})");
 
@@ -142,6 +165,7 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
 
             return NoContent();
         }
+
 
         [HttpPut("{personId}/updatePhoneNumber")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -175,7 +199,10 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces(MediaTypeNames.Application.Json)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public IActionResult UpdatePersonEmail([FromRoute] int personId, [FromForm][EmailAddress] string email)
+        public IActionResult UpdatePersonEmail
+            ([FromRoute] int personId,
+            [FromForm][EmailAddress(ErrorMessage = "Invalid email address.")] string email
+            )
         {
             _logger.LogInformation($"Updating {nameof(email)} details to {email} for user (id: {personId})");
 
@@ -193,17 +220,19 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
             return NoContent();
         }
 
-        [HttpPut("{personId}/updateEmail")]
+        [HttpPut("{personId}/updatePersonImage")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces(MediaTypeNames.Application.Json)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public IActionResult UpdatePersonImage([FromRoute] int personId, [FromForm][EmailAddress] string email)
-        {
-            _logger.LogInformation($"Updating {nameof(email)} details to {email} for user (id: {personId})");
 
+
+        public IActionResult UpdatePersonImage([FromRoute] int personId, [FromForm][EmailAddress] int profilePictureId)
+        {
+            _logger.LogInformation($"Updating profile picture for user (id: {personId})");
+            // kviesti image servise - GetImage - gaunu int
             var entity = _personRepository.GetPersonByPersonId(personId);
 
             if (entity == null)
@@ -212,7 +241,7 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
                 return NotFound();
             }
 
-            entity.Email = email;
+            entity.ProfilePictureId = profilePictureId;
             _personRepository.UpdatePerson(entity);
 
             return NoContent();

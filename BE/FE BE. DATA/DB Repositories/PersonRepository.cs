@@ -25,50 +25,39 @@ namespace FE_BE._DATA.DB_Repositories
 
         // ================================ METHODS ================================
 
-        public Person CreateNewPerson(int userId)
+        public int AddNewPerson(Person person)
         {
-            _logger.LogInformation($"Creating a person with ID: {userId}");
-            Person newPerson = (new Person
-            {
-                Name = "",
-                Surname = "",
-                SocialSecurityNumber = "",
-                PhoneNumber = "",
-                Email = "",
-                UserId = userId,
-                UserLocationId = null,
-                ProfilePictureId = null,
-            });
+            _logger.LogInformation($"Creating a person with ID: {person.Id}");
 
-            _dbContext.Persons.Add(newPerson);
+            _dbContext.Persons.Add(person);
             _dbContext.SaveChanges();
-            _logger.LogInformation($"Person with ID: {userId} has been successfully created.");
-            return newPerson;
+            _logger.LogInformation($"Person {person.Name} {person.Surname} with ID: {person.Id} has been successfully created.");
+            return person.Id;
         }
 
-        public void DeletePersonById(int userId)
+        public void DeletePersonById(int personId)
         {
-            var personToDelete = _dbContext.Persons.Find(userId);
+            var personToDelete = _dbContext.Persons.Find(personId);
             if (personToDelete != null)
             {
                 _dbContext.Persons.Remove(personToDelete);
                 _dbContext.SaveChanges();
-                _logger.LogInformation($"Person (ID: {userId}) {personToDelete.Name} {personToDelete.Surname} has been successfully deleted");
+                _logger.LogInformation($"Person (ID: {personId}) {personToDelete.Name} {personToDelete.Surname} has been successfully deleted");
             }
         }
 
         public Person GetPersonByUserId(int userId)
         {
-            return _dbContext.Persons.Include(person => person.UserId).FirstOrDefault(person => person.UserId == userId);
+            return _dbContext.Persons.Include(person => person.UserId).FirstOrDefault(person => person.UserId == userId);//ok
         }
 
         public Person GetPersonByPersonId(int personId)
         {
-            return _dbContext.Persons.Include(include => include.User).FirstOrDefault(person => person.Id == personId);
+            return _dbContext.Persons.Include(include => include.User).FirstOrDefault(person => person.Id == personId);//ok
         }
 
 
-        public void UpdatePerson(Person person)//gal nereik userid ateina is controller mapper
+        public void UpdatePerson(Person person)
         {
             _dbContext.Persons.Update(person);
             _dbContext.SaveChanges();
