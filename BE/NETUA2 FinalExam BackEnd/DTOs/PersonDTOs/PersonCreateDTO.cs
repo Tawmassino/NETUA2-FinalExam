@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FE_BE._DATA.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace NETUA2_FinalExam_BackEnd.DTOs.PersonDTOs
 {
@@ -13,6 +14,9 @@ namespace NETUA2_FinalExam_BackEnd.DTOs.PersonDTOs
         public int UserId { get; set; }
 
         public int? UserLocationId { get; set; }
-        public int? ProfilePictureId { get; set; }
+
+
+
+        public IFormFile? ProfilePicture { get; set; }
     }
 }

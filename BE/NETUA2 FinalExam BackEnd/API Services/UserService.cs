@@ -99,27 +99,37 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
 
 
         //create person
-        public Person CreateNewPerson(int userId)
+        public Person CreateNewPerson(Person newPersonData)
         {
-            _logger.LogInformation($"Creating a person with ID: {userId}");
-            Person newPerson = (new Person
-            {
-                Name = "",
-                Surname = "",
-                SocialSecurityNumber = "",
-                PhoneNumber = "",
-                Email = "",
-                UserId = userId,
-                //UserLocationId = null,
-                ProfilePictureId = null,
-            });
+            _logger.LogInformation($"Creating a person with ID: {newPersonData.Id} and userID: {newPersonData.UserId}");
+            //newPersonData.UserId = userId;
 
-            _logger.LogInformation($"Person with ID: {userId} has been successfully created.");
-            return newPerson;
+
+            //Person newPerson = (new Person
+            //{
+            //    Name = newPersonData.Name,
+            //    Surname = newPersonData.Surname,
+            //    SocialSecurityNumber = newPersonData.SocialSecurityNumber,
+            //    PhoneNumber = newPersonData.PhoneNumber,
+            //    Email = newPersonData.Email,
+            //    UserId = userId,
+            //    //UserLocationId = null,
+            //    ProfilePictureId = personImageId,
+            //});
+
+            _logger.LogInformation($"Person with ID: {newPersonData.Id} and userID: {newPersonData.UserId} has been successfully created.");
+
+            _personRepository.AddNewPerson(newPersonData);
+            _logger.LogInformation($"Person with ID: {newPersonData.Id} and userID: {newPersonData.UserId} sent to DataBase.");
+
+            return newPersonData;
         }
 
         //create location
-
+        public LivingLocation CreateNewLocation(int userId)
+        {
+            return null;
+        }
 
 
         public void DeleteUser(int userId)

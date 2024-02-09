@@ -1,5 +1,6 @@
 ﻿using FE_BE._DATA.Entities;
 using NETUA2_FinalExam_BackEnd.API_Services.API_Interfaces;
+using NETUA2_FinalExam_BackEnd.Controllers;
 using NETUA2_FinalExam_BackEnd.DTOs.UserDTOs;
 
 namespace NETUA2_FinalExam_BackEnd.API_Services
@@ -7,10 +8,11 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
     public class UserMapper : IUserMapper
     {
         private readonly IUserService _userService;
-
-        public UserMapper(IUserService userService)
+        private readonly ILogger<UserMapper> _logger;
+        public UserMapper(IUserService userService, ILogger<UserMapper> logger)
         {
             _userService = userService;
+            _logger = logger;
         }
 
         // ===================== METHODS =====================
@@ -18,7 +20,7 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
         /// CREATE: dto -> model
         /// </summary>
         /// <param name="dto"></param>
-        /// <returns></returns>
+        /// <returns>User model</returns>
         public User Map(UserCreateDTO dto)
         {
             return new User
@@ -35,7 +37,7 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
         /// UPDATE: dto -> model
         /// </summary>
         /// <param name="dto"></param>
-        /// <returns></returns>
+        /// <returns>User Model</returns>
         public User Map(UserUpdateDTO dto)
         {
             _userService.CreatePasswordHash(dto.Password, out var passwordHash, out var passwordSalt);
@@ -54,7 +56,7 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
         /// model -> dto
         /// </summary>
         /// <param name="user"></param>
-        /// <returns></returns>
+        /// <returns>User DTO</returns>
         public UserGetDTO Map(User user)
         {
             var entity = new UserGetDTO

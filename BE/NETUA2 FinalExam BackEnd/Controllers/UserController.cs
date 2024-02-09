@@ -24,7 +24,12 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         private readonly IUserDBRepository _userDBRepository;
         private readonly IPersonRepository _personRepository;
 
-        public UserController(ILogger<UserController> logger, IUserService userService, IJwtService jwtService, IUserDBRepository userDBRepository, IPersonRepository personRepository)
+        public UserController(
+            ILogger<UserController> logger,
+            IUserService userService,
+            IJwtService jwtService,
+            IUserDBRepository userDBRepository,
+            IPersonRepository personRepository)
         {
             _logger = logger;
             _userService = userService;
@@ -58,7 +63,7 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
             }
 
             //Generating JWT in the controller
-            var jwtToken = _jwtService.GetJwtToken(request.Username, role, User.Id); //neturi DTO buti id //problema: grazina 0
+            var jwtToken = _jwtService.GetJwtToken(request.Username, role, User.Id);
 
             _logger.LogInformation($"User {request.Username} successfully logged in");
 
@@ -79,9 +84,6 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
             {
                 return BadRequest(response.Message);
             }
-
-            var newPerson = _userService.CreateNewPerson(response.UserId);
-            _personRepository.AddNewPerson(newPerson);//repo is kontroleriu nekviesti !!!
 
             return Ok();
         }
@@ -106,6 +108,9 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
                 return NotFound();
             }
             _userDBRepository.DeleteUser(id);
+
+            //sql cascade delete
+
             return NoContent();
         }
 

@@ -11,6 +11,6 @@ namespace FE_BE._BUSINESS.BL_Services.BL_Interfaces
     {
         ImageFile GetImage(int id);
         int AddImage(ImageFile imageFile);
-
+        ImageFile ResizeImage(ImageFile originalImageFile);
     }
 }

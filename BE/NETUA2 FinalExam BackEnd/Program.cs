@@ -23,6 +23,7 @@ namespace NETUA2_FinalExam_BackEnd
             // Add services to the container.
             builder.Services.AddTransient<IJwtService, JwtService>();
             builder.Services.AddTransient<IUserMapper, UserMapper>();
+            builder.Services.AddTransient<IPersonMapper, PersonMapper>();
             builder.Services.AddScoped<IUserDBRepository, UserDBRepository>();//Repositories should be scoped
             builder.Services.AddScoped<IUserService, UserService>();//Update method should be scoped            
             builder.Services.AddScoped<IImageRepository, ImageRepository>();//Repositories should be scoped
@@ -55,6 +56,10 @@ namespace NETUA2_FinalExam_BackEnd
                        IssuerSigningKey = key
                    };
                });
+
+
+
+
             //For getting currently logged-in User ID
             builder.Services.AddHttpContextAccessor();
 
@@ -76,7 +81,31 @@ namespace NETUA2_FinalExam_BackEnd
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 opt.IncludeXmlComments(xmlPath);//needs to tick a box in project -> properties to generate comments
 
+
+
+                opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please ender valid JWT token",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT"
+                });
+                opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme{Reference = new OpenApiReference
+                        {
+                            Id = "Bearer",
+                            Type = ReferenceType.SecurityScheme
+                        }}, new List<string>()
+                    }
+                });
+
             });
+
+
 
             var app = builder.Build();
 

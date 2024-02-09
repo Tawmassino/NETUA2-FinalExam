@@ -29,9 +29,14 @@ namespace FE_BE._DATA.DB_Repositories
         {
             _logger.LogInformation($"Creating a person with ID: {person.Id}");
 
-            _dbContext.Persons.Add(person);
-            _dbContext.SaveChanges();
-            _logger.LogInformation($"Person {person.Name} {person.Surname} with ID: {person.Id} has been successfully created.");
+            //check if doesnt exist already
+            var existingPerson = GetPersonByUserId(person.Id);
+            if (existingPerson == null)
+            {
+                _dbContext.Persons.Add(person);
+                _dbContext.SaveChanges();
+                _logger.LogInformation($"Person {person.Name} {person.Surname} with ID: {person.Id} has been successfully created.");
+            }
             return person.Id;
         }
 

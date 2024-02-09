@@ -6,6 +6,7 @@ using NETUA2_FinalExam_BackEnd.DTOs;
 using System.Net.Mime;
 //using static System.Net.Mime.MediaTypeNames;
 using System.Drawing;
+using FE_BE._DATA.DB_Repositories;
 
 
 
@@ -24,17 +25,20 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         private readonly IImageRepository _imageRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUserDBRepository _userDBRepository;
+        private readonly IImageFileService _imageFileService;
 
         public ImageController(
             ILogger<ImageController> logger,
             IImageRepository imageRepository,
             IHttpContextAccessor httpContextAccessor,
-            IUserDBRepository userDBRepository)
+            IUserDBRepository userDBRepository,
+            IImageFileService imageFileService)
         {
             _logger = logger;
             _imageRepository = imageRepository;
             _httpContextAccessor = httpContextAccessor;
             _userDBRepository = userDBRepository;
+            _imageFileService = imageFileService;
         }
 
         // ==================== methods ====================
@@ -49,23 +53,34 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
 
 
 
-        // POST api/<ImageController>
         [HttpPost("UploadImage")]
         public IActionResult UploadImage(ImageUploadRequest request)
         {
-            using var memorystream = new MemoryStream();
-            request.Image.CopyTo(memorystream);//DTO
-            var imageBytes = memorystream.ToArray();
-            var imageFile = new ImageFile
+            try
             {
-                Content = imageBytes,
-                ContentType = request.Image.ContentType,
-                FileName = request.Image.FileName,
-                Size = imageBytes.Length
-            };
+                using var memoryStream = new MemoryStream();
+                request.Image.CopyTo(memoryStream); // DTO property Image (type IFormFile)
+                var imageBytes = memoryStream.ToArray();
 
-            return Ok(_imageRepository.AddImage(imageFile));
+                var imageFile = new ImageFile
+                {
+                    Content = imageBytes,
+                    ContentType = request.Image.ContentType,
+                    FileName = request.Image.FileName,
+                    Size = imageBytes.Length
+                };
+
+                var resizedImageFile = _imageFileService.ResizeImage(imageFile);
+                var addedResizedImageFile = _imageFileService.GetImage(_imageFileService.AddImage(resizedImageFile));
+
+                return Ok(addedResizedImageFile);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
+
 
 
         [HttpGet("download/{id}")]
@@ -81,6 +96,7 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
             return File(imageFile.Content, imageFile.ContentType, imageFile.FileName);
         }
 
+        //------------------------------------
 
         [HttpPost("upload and create thumbnail")]
         public IActionResult UploadImageAndCreateThumbnail([FromForm] ImageUploadRequest request)
@@ -104,7 +120,7 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
             using var thumbnailStream = new MemoryStream();
             thumbnail.Save(thumbnailStream, System.Drawing.Imaging.ImageFormat.Jpeg);
 
-            // Create an ImageFile for the thumbnail
+            //Create an ImageFile for the thumbnail
             var thumbnailBytes = thumbnailStream.ToArray();
 
             var thumbnailFileName = $"{Path.GetFileNameWithoutExtension(request.Image.FileName).Split('.').First()}_thumbnail.jpg";
@@ -112,12 +128,12 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
             var thumbnailFile = new ImageFile
             {
                 Content = thumbnailBytes,
-                ContentType = "image/jpeg", // Set the content type accordingly
-                FileName = thumbnailFileName, // Set the file name accordingly
+                ContentType = "image/jpeg", //Set the content type 
+                FileName = thumbnailFileName, //Set the file name 
                 Size = thumbnailBytes.Length
             };
 
-            // Add the original image and thumbnail to the ImageFileService
+            //Add the original image and thumbnail
             var imageBytes = memoryStream.ToArray();
             var originalImageFile = new ImageFile
             {
@@ -127,18 +143,99 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
                 Size = imageBytes.Length
             };
 
-            // Use the GetImageFile method to get the ImageFile after adding it to the repository
+            //Use the GetImageFile method to get the ImageFile after adding it to the repository
             var addedOriginalImageFile = _imageRepository.GetImage(_imageRepository.AddImage(originalImageFile));
             var addedThumbnailFile = _imageRepository.GetImage(_imageRepository.AddImage(thumbnailFile));
-
             var addedFiles = new List<ImageFile>
             {
-            addedOriginalImageFile,
-            addedThumbnailFile
-            };
+                    addedOriginalImageFile,
+                    addedThumbnailFile
+                    };
 
             return Ok(addedFiles);
         }
 
+
     }
 }
+
+// ==================== obsolete ====================
+
+
+//[HttpPost("UploadImage")]
+//public IActionResult UploadImage(ImageUploadRequest request)
+//{
+//    using var memorystream = new MemoryStream();
+//    request.Image.CopyTo(memorystream);//DTO
+//    var imageBytes = memorystream.ToArray();
+//    var imageFile = new ImageFile
+//    {
+//        Content = imageBytes,
+//        ContentType = request.Image.ContentType,
+//        FileName = request.Image.FileName,
+//        Size = imageBytes.Length
+//    };
+
+//    return Ok(_imageRepository.AddImage(imageFile));
+//}
+
+
+
+
+
+//[HttpPost("upload and create thumbnail")]
+//public IActionResult UploadImageAndCreateThumbnail([FromForm] ImageUploadRequest request)
+//{
+//    using var memoryStream = new MemoryStream();
+//    request.Image.CopyTo(memoryStream); //  DTO  property Image of type IFormFile
+
+//    var originalImage = Image.FromStream(memoryStream);
+
+//    // Create a thumbnail
+//    var thumbnailWidth = 200; //set width
+//    var thumbnailHeight = (int)((double)originalImage.Height / originalImage.Width * thumbnailWidth);
+
+//    using var thumbnail = new Bitmap(thumbnailWidth, thumbnailHeight);
+//    using (var graphics = Graphics.FromImage(thumbnail))
+//    {
+//        graphics.DrawImage(originalImage, 0, 0, thumbnailWidth, thumbnailHeight);
+//    }
+
+//    // Save the thumbnail to a MemoryStream
+//    using var thumbnailStream = new MemoryStream();
+//    thumbnail.Save(thumbnailStream, System.Drawing.Imaging.ImageFormat.Jpeg);
+
+//    //Create an ImageFile for the thumbnail
+//    var thumbnailBytes = thumbnailStream.ToArray();
+
+//    var thumbnailFileName = $"{Path.GetFileNameWithoutExtension(request.Image.FileName).Split('.').First()}_thumbnail.jpg";
+
+//    var thumbnailFile = new ImageFile
+//    {
+//        Content = thumbnailBytes,
+//        ContentType = "image/jpeg", //Set the content type 
+//        FileName = thumbnailFileName, //Set the file name 
+//        Size = thumbnailBytes.Length
+//    };
+
+//    //Add the original image and thumbnail
+//    var imageBytes = memoryStream.ToArray();
+//    var originalImageFile = new ImageFile
+//    {
+//        Content = imageBytes,
+//        ContentType = request.Image.ContentType,
+//        FileName = request.Image.FileName,
+//        Size = imageBytes.Length
+//    };
+
+//    //Use the GetImageFile method to get the ImageFile after adding it to the repository
+//    var addedOriginalImageFile = _imageRepository.GetImage(_imageRepository.AddImage(originalImageFile));
+//    var addedThumbnailFile = _imageRepository.GetImage(_imageRepository.AddImage(thumbnailFile));
+//    var addedFiles = new List<ImageFile>
+//    {
+//            addedOriginalImageFile,
+//            addedThumbnailFile
+//            };
+
+//    return Ok(addedFiles);
+//}

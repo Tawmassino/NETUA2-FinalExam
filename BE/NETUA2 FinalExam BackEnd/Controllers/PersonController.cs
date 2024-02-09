@@ -1,9 +1,11 @@
-﻿using FE_BE._DATA.DB_Repositories.DB_Interfaces;
+﻿using FE_BE._BUSINESS.BL_Services.BL_Interfaces;
+using FE_BE._DATA.DB_Repositories.DB_Interfaces;
 using FE_BE._DATA.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NETUA2_FinalExam_BackEnd.API_Services.API_Interfaces;
 using NETUA2_FinalExam_BackEnd.DTOs.PersonDTOs;
+using NETUA2_FinalExam_BackEnd.DTOs.UserDTOs;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
 
@@ -18,17 +20,20 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;//ar sita tik user controller?
         private readonly IUserService _userService;
         private readonly IPersonRepository _personRepository;
+        private readonly IPersonMapper _personMapper;
+        private readonly IImageFileService _imageFileService;
 
         public PersonController(
-            ILogger<PersonController> logger,
-            IHttpContextAccessor httpContextAccessor,
-            IUserService userService, IPersonRepository personRepository
+            ILogger<PersonController> logger, IHttpContextAccessor httpContextAccessor,
+            IUserService userService, IPersonRepository personRepository, IPersonMapper personMapper, IImageFileService imageFileService
             )
         {
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
             _userService = userService;
             _personRepository = personRepository;
+            _personMapper = personMapper;
+            _imageFileService = imageFileService;
         }
 
 
@@ -71,13 +76,35 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
 
         }
 
-        // POST create new person
+        // POST CreateOrUpdate new person??
+
+        /// <summary>
+        /// creates a section for personal information (person class)
+        /// </summary>
+        /// <param name="request"></param>
+        /// <response code="500">System error</response>
+        [HttpPost("CreateNewPerson")]
+        public IActionResult CreateNewPerson([FromBody] PersonCreateDTO request)
+        {
+            //mapper dto -> person
+            var newPerson = _personMapper.Map(request, request.UserId);
+
+
+            var personImageId = _imageFileService.AddImage(newPerson.ProfilePicture);// KELIAM FOTO
+
+            newPerson.ProfilePictureId = personImageId;//priskiriam foto id (FK)
+
+            //newPerson.UserId = request.UserId;// jau yra mapery
+
+            //create person
+            _userService.CreateNewPerson(newPerson);//integruotas siuntimas i DB
+
+            return Ok();
+        }
 
 
 
-        // ===================================== UPDATING USER =====================================
-        //CANNOT UPDATE TO EMPTY OR WHITEPSACE     
-        //implement validation logic!! 
+        // ===================================== UPDATING PERSON =====================================
 
         [HttpPut("{personId}/updateName")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
