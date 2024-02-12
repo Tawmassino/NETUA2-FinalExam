@@ -32,7 +32,7 @@ namespace FE_BE._DATA.Entities
 
 
         [ForeignKey(nameof(ProfilePicture))]
-        public int? ProfilePictureId { get; set; }
+        public int ProfilePictureId { get; set; }
         public ImageFile? ProfilePicture { get; set; }
 
     }

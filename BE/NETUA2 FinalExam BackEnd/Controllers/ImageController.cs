@@ -7,11 +7,10 @@ using System.Net.Mime;
 //using static System.Net.Mime.MediaTypeNames;
 using System.Drawing;
 using FE_BE._DATA.DB_Repositories;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 
 
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace NETUA2_FinalExam_BackEnd.Controllers
 {
@@ -43,12 +42,13 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
 
         // ==================== methods ====================
         // GET: api/<ImageController>
-        [HttpGet]
+        [HttpGet("GetImage")]
         //[ProducesResponseType(typeof(List<ImageResultDto>), StatusCodes.Status200OK)]
         [Produces(MediaTypeNames.Application.Json)]
-        public IEnumerable<string> Get()
+        public IActionResult GetImage(int imageId)
         {
-            return new string[] { "value1", "value2" };
+            var imageToGet = _imageFileService.GetImage(imageId);
+            return Ok(imageToGet);
         }
 
 
@@ -58,10 +58,12 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         {
             try
             {
+                // Convert the uploaded image to bytes
                 using var memoryStream = new MemoryStream();
                 request.Image.CopyTo(memoryStream); // DTO property Image (type IFormFile)
                 var imageBytes = memoryStream.ToArray();
 
+                // Create ImageFile from the uploaded image
                 var imageFile = new ImageFile
                 {
                     Content = imageBytes,
@@ -70,6 +72,7 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
                     Size = imageBytes.Length
                 };
 
+                // Resize the image and add it to the repository
                 var resizedImageFile = _imageFileService.ResizeImage(imageFile);
                 var addedResizedImageFile = _imageFileService.GetImage(_imageFileService.AddImage(resizedImageFile));
 
@@ -86,7 +89,7 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         [HttpGet("download/{id}")]
         public IActionResult Download(int id)
         {
-
+            // Get the image file by ID from the repository
             var imageFile = _imageRepository.GetImage(id);
             if (imageFile == null)
             {
@@ -154,9 +157,9 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
 
             return Ok(addedFiles);
         }
-
-
     }
+
+
 }
 
 // ==================== obsolete ====================
@@ -232,10 +235,11 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
 //    var addedOriginalImageFile = _imageRepository.GetImage(_imageRepository.AddImage(originalImageFile));
 //    var addedThumbnailFile = _imageRepository.GetImage(_imageRepository.AddImage(thumbnailFile));
 //    var addedFiles = new List<ImageFile>
-//    {
-//            addedOriginalImageFile,
-//            addedThumbnailFile
-//            };
+//            {
+//                    addedOriginalImageFile,
+//                    addedThumbnailFile
+//                    };
 
 //    return Ok(addedFiles);
 //}
+//    }

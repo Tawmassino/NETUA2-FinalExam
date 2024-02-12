@@ -14,11 +14,11 @@ using Image = System.Drawing.Image;
 
 namespace FE_BE._BUSINESS.BL_Services
 {
-    internal class ImageFileService : IImageFileService
+    public class ImageFileService : IImageFileService
     {
-        private readonly ImageRepository _imageDBRepository;
+        private readonly IImageRepository _imageDBRepository;
 
-        public ImageFileService(ImageRepository imageDBRepository)
+        public ImageFileService(IImageRepository imageDBRepository)
         {
             _imageDBRepository = imageDBRepository;
         }
@@ -27,7 +27,7 @@ namespace FE_BE._BUSINESS.BL_Services
         public int AddImage(ImageFile imageFile)
         {
             _imageDBRepository.AddImage(imageFile);
-            return imageFile.Id;
+            return (int)imageFile.Id;
         }
 
         public ImageFile GetImage(int id)

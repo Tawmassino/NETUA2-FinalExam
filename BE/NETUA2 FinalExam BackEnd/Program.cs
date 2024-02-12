@@ -11,6 +11,10 @@ using Microsoft.Extensions.Configuration;
 using FE_BE._DATA;
 using Microsoft.EntityFrameworkCore;
 using FE_BE._DATA.DB_Repositories.DB_Interfaces;
+using FE_BE._BUSINESS.BL_Services.BL_Interfaces;
+using FE_BE._BUSINESS.BL_Services;
+
+
 
 namespace NETUA2_FinalExam_BackEnd
 {
@@ -21,17 +25,30 @@ namespace NETUA2_FinalExam_BackEnd
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            //JWT
             builder.Services.AddTransient<IJwtService, JwtService>();
+
+            //SERVICES
+            builder.Services.AddScoped<IUserService, UserService>();//Update method should be scoped  
+            builder.Services.AddScoped<IImageFileService, ImageFileService>();
+
+
+            //MAPPERS
             builder.Services.AddTransient<IUserMapper, UserMapper>();
             builder.Services.AddTransient<IPersonMapper, PersonMapper>();
-            builder.Services.AddScoped<IUserDBRepository, UserDBRepository>();//Repositories should be scoped
-            builder.Services.AddScoped<IUserService, UserService>();//Update method should be scoped            
-            builder.Services.AddScoped<IImageRepository, ImageRepository>();//Repositories should be scoped
-            builder.Services.AddScoped<IPersonRepository, PersonRepository>();//Repositories should be scoped
+            builder.Services.AddTransient<ILocationMapper, LocationMapper>();
+
+
+            //REPOSITORIES            
+            builder.Services.AddScoped<IUserDBRepository, UserDBRepository>();//Repositories - scoped                    
+            builder.Services.AddScoped<IImageRepository, ImageRepository>();//Repositories - scoped            
+            builder.Services.AddScoped<IPersonRepository, PersonRepository>();//Repositories - scoped
             builder.Services.AddScoped<ILivingLocationRepository, LivingLocationRepository>();//Repositories should be scoped
 
 
 
+
+            // Connecting the database
             builder.Services.AddDbContext<FinalExamDbContext>(options =>
             {
                 //sql lite - would work not only on windowsOS
@@ -82,7 +99,7 @@ namespace NETUA2_FinalExam_BackEnd
                 opt.IncludeXmlComments(xmlPath);//needs to tick a box in project -> properties to generate comments
 
 
-
+                // Authorize button/function in swagger
                 opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,

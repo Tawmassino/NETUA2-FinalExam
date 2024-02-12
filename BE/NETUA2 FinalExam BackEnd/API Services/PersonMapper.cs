@@ -10,15 +10,15 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
         public Person Map(PersonCreateDTO dto, int userId)
         {
             using var memoryStream = new MemoryStream();
-            dto.ProfilePicture.CopyTo(memoryStream);
+            //dto.ProfilePicture.CopyTo(memoryStream);
 
             var imageBytes = memoryStream.ToArray();
 
             var imageFile = new ImageFile
             {
                 Content = imageBytes,
-                ContentType = dto.ProfilePicture.ContentType,
-                FileName = dto.ProfilePicture.FileName,
+                //ContentType = dto.ProfilePicture.ContentType,
+                //FileName = dto.ProfilePicture.FileName,
                 Size = imageBytes.Length
             };
 

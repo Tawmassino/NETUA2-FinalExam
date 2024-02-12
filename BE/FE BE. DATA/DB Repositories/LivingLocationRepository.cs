@@ -24,21 +24,14 @@ namespace FE_BE._DATA.DB_Repositories
 
         // ================================ METHODS ================================
 
-        public LivingLocation CreateNewLivingLocation(int personId)
+        public int CreateNewLivingLocation(LivingLocation location)
         {
-            _logger.LogInformation($"Creating a person with ID: {personId}");
-            LivingLocation newLocation = (new LivingLocation
-            {
-                City = "",
-                StreetName = "",
-                HouseNumber = 0,
-                Country = "",
-            });
+            _logger.LogInformation($"Creating a location with ID:{location.Id} for person with id {location.PersonId}.");
 
-            _dbContext.Locations.Add(newLocation);
+            _dbContext.Locations.Add(location);
             _dbContext.SaveChanges();
-            _logger.LogInformation($"Person with ID: {personId} has been successfully created.");
-            return newLocation;
+            _logger.LogInformation($"Location with ID: {location.Id} has been successfully created for person with id {location.PersonId}.");
+            return location.Id;
         }
 
         public void DeleteLivingLocationByLocationId(int locationId)
@@ -54,14 +47,22 @@ namespace FE_BE._DATA.DB_Repositories
 
         public void DeleteLivingLocationByPersonId(int personId)
         {
-            throw new NotImplementedException();
+            var locationToDelete = GetLocationByPersonId(personId);
+            if (locationToDelete != null)
+            {
+                _dbContext.Locations.Remove(locationToDelete);
+                _dbContext.SaveChanges();
+                _logger.LogInformation($"Location with ID: {locationToDelete.Id} has been successfully deleted ");
+            }
         }
 
 
-        public LivingLocation GetLivingLocationByPersonId(int personId)
+        public LivingLocation GetLocationByPersonId(int personId)
         {
-            return _dbContext.Locations.Include(location => location.Person).FirstOrDefault(location => location.PersonId == personId);
+            return _dbContext.Locations.Include(location => location.Person).FirstOrDefault(location => location.PersonId == personId);//ok           
         }
+
+
 
         public LivingLocation GetLivingLocationByLocationId(int locationId)
         {
@@ -72,7 +73,12 @@ namespace FE_BE._DATA.DB_Repositories
 
         public void UpdateLivingLocation(LivingLocation location)
         {
-            throw new NotImplementedException();
+            _dbContext.Locations.Update(location);
+            _dbContext.SaveChanges();
         }
+
+
+
+
     }
 }

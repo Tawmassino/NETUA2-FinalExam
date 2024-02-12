@@ -19,6 +19,7 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
         private readonly IJwtService _jwtService;
         private readonly IPersonRepository _personRepository;//galima
         //location repo
+        private readonly ILivingLocationRepository _locationRepository;
 
 
         public UserService(
@@ -26,16 +27,18 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
             IUserDBRepository userDBRepository,
             ILogger<UserService> logger,
             IJwtService jwtService,
-            IPersonRepository personRepository)
+            IPersonRepository personRepository,
+            ILivingLocationRepository locationRepository)
         {
             _httpContextAccessor = httpContextAccessor;
             _userDBRepository = userDBRepository;
             _logger = logger;
             _jwtService = jwtService;
             _personRepository = personRepository;
+            _locationRepository = locationRepository;
         }
 
-        // ==================== methods ====================
+        // ============================================================ methods ============================================================
 
         public int GetCurrentUserId()
         {
@@ -49,8 +52,8 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
             //tuple - su bool ir useriu          
             var user = _userDBRepository.GetUserByUsername(username);
             var userId = user.Id;
-
             role = user?.Role;
+
             if (user == null)
             {
                 _logger.LogWarning($"Username or password does not match");
@@ -96,7 +99,7 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
 
             return user;
         }
-
+        // -------------------------------------------------------- person methods --------------------------------------------------------
 
         //create person
         public Person CreateNewPerson(Person newPersonData)
@@ -104,18 +107,10 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
             _logger.LogInformation($"Creating a person with ID: {newPersonData.Id} and userID: {newPersonData.UserId}");
             //newPersonData.UserId = userId;
 
-
             //Person newPerson = (new Person
-            //{
-            //    Name = newPersonData.Name,
-            //    Surname = newPersonData.Surname,
-            //    SocialSecurityNumber = newPersonData.SocialSecurityNumber,
-            //    PhoneNumber = newPersonData.PhoneNumber,
-            //    Email = newPersonData.Email,
-            //    UserId = userId,
-            //    //UserLocationId = null,
-            //    ProfilePictureId = personImageId,
-            //});
+            //{//    Name = newPersonData.Name,//    Surname = newPersonData.Surname,//    SocialSecurityNumber = newPersonData.SocialSecurityNumber,
+            //    PhoneNumber = newPersonData.PhoneNumber,//    Email = newPersonData.Email,//    UserId = userId,
+            //    //UserLocationId = null,//    ProfilePictureId = personImageId,//});
 
             _logger.LogInformation($"Person with ID: {newPersonData.Id} and userID: {newPersonData.UserId} has been successfully created.");
 
@@ -125,13 +120,29 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
             return newPersonData;
         }
 
+
+        // -------------------------------------------------------- location methods --------------------------------------------------------
+
+
         //create location
-        public LivingLocation CreateNewLocation(int userId)
+        public LivingLocation CreateNewLocation(LivingLocation location)
         {
-            return null;
+            _locationRepository.CreateNewLivingLocation(location);
+            _logger.LogInformation($"Location with ID: {location.Id} has been successfully created for person with id {location.PersonId}.");
+
+            return location;
         }
 
+        public LivingLocation GetCurrentLivingLocation()
+        {
+            var userId = GetCurrentUserId();
+            Person person = _personRepository.GetPersonByUserId(userId);
+            LivingLocation location = _locationRepository.GetLocationByPersonId(person.Id);
 
+            return location;
+        }
+
+        // ---------------------------- user methods ----------------------------
         public void DeleteUser(int userId)
         {
             _userDBRepository.DeleteUser(userId);
@@ -140,7 +151,7 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
             //delete image
         }
 
-        // ==================== password hash verification ====================
+        // ======================================== password hash verification ========================================
         public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
             using var hmac = new HMACSHA512();

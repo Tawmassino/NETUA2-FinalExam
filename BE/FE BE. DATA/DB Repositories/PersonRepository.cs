@@ -53,7 +53,14 @@ namespace FE_BE._DATA.DB_Repositories
 
         public Person GetPersonByUserId(int userId)
         {
-            return _dbContext.Persons.Include(person => person.UserId).FirstOrDefault(person => person.UserId == userId);//ok
+            //return _dbContext.Persons.Include(person => person.User).FirstOrDefault(person => person.UserId == userId);//ok
+            return _dbContext.Persons.Include(person => person.User).FirstOrDefault(person => person.UserId == userId && person.User != null);
+            //ne include userId
+        }
+
+        public LivingLocation GetLocationByPersonId(int personId)
+        {
+            return _dbContext.Locations.Include(location => location.Person).FirstOrDefault(location => location.PersonId == personId);//ok           
         }
 
         public Person GetPersonByPersonId(int personId)
@@ -67,5 +74,7 @@ namespace FE_BE._DATA.DB_Repositories
             _dbContext.Persons.Update(person);
             _dbContext.SaveChanges();
         }
+
+
     }
 }

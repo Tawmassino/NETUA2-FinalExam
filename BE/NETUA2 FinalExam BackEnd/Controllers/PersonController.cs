@@ -38,12 +38,22 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
 
 
         // ======================= METHODS =======================
+
+
+
+        //IMAGE?
+        //  fail: Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware[1] //An unhandled exception has occurred while executing the request.
+        //System.InvalidOperationException: Unable to resolve service for type 'FE_BE._BUSINESS.BL_Services.BL_Interfaces.IImageFileService' while attempting to activate 'NETUA2_FinalExam_BackEnd.Controllers.PersonController'.
+
+        //local storage?
+
+
+
         /// <summary>
         /// Gets a person from current user.
         /// </summary>
         /// <param></param>
         /// <returns></returns>
-
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(Person), StatusCodes.Status200OK)]
         [HttpGet("GetPersonInfoFromUser")]
@@ -51,6 +61,12 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         {
             var userId = _userService.GetCurrentUserId();
             Person person = _personRepository.GetPersonByUserId(userId);
+            if (person == null)
+            {
+                return NotFound();
+
+            }
+            var imageToGet = _imageFileService.GetImage(person.ProfilePictureId);
 
             return Ok(person);
         }
@@ -89,15 +105,14 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
             //mapper dto -> person
             var newPerson = _personMapper.Map(request, request.UserId);
 
+            //FOR LATER --- IMPLEMENT UPLOAD PIC
+            //var personImageId = _imageFileService.AddImage(newPerson.ProfilePicture);// Uploading picture, getting the picture ID
+            //newPerson.ProfilePictureId = personImageId;//setting the picture id to Person Foreign Key of picture id
 
-            var personImageId = _imageFileService.AddImage(newPerson.ProfilePicture);// KELIAM FOTO
-
-            newPerson.ProfilePictureId = personImageId;//priskiriam foto id (FK)
-
-            //newPerson.UserId = request.UserId;// jau yra mapery
+            //newPerson.UserId = request.UserId;// already in the mapper
 
             //create person
-            _userService.CreateNewPerson(newPerson);//integruotas siuntimas i DB
+            _userService.CreateNewPerson(newPerson);//send to service and then to DataBase
 
             return Ok();
         }
@@ -112,11 +127,14 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces(MediaTypeNames.Application.Json)]
-        [Consumes(MediaTypeNames.Multipart.FormData)]//duomenys is formos
+        //[Consumes(MediaTypeNames.Multipart.FormData)]//data from form
+        //[Consumes(MediaTypeNames.Application.Json)] - error for some reason. Changed to plain text. Remeber - pass plain string, not JSON anymore
+        [Consumes(MediaTypeNames.Text.Plain)]
         public IActionResult UpdatePersonName
             ([FromRoute] int personId,
-            [FromForm] [Required(ErrorMessage = "Name is required.")]//required uztenka
-            [RegularExpression(@"^[^\s]+$", ErrorMessage = "Name cannot be empty or whitespace.")]//gali nebuti
+            [FromBody] [Required(ErrorMessage = "Name is required.")]//required uztenka
+            [StringLength(30, MinimumLength = 3, ErrorMessage = "Name must be between 3 and 30 characters.")]
+
             string personName
             )
         {
@@ -140,10 +158,11 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces(MediaTypeNames.Application.Json)]
-        [Consumes(MediaTypeNames.Application.Json)]
+        //[Consumes(MediaTypeNames.Application.Json)] - error for some reason. Changed to plain text. Remeber - pass plain string, not JSON anymore
+        [Consumes(MediaTypeNames.Text.Plain)]
         public IActionResult UpdatePersonSurname
             ([FromRoute] int personId,
-            [FromForm][Required(ErrorMessage = "Surname is required.")]
+            [FromBody][Required(ErrorMessage = "Surname is required.")]
             [RegularExpression(@"^[^\s]+$", ErrorMessage = "Surname cannot be empty or whitespace.")]
             [StringLength(30, MinimumLength = 3, ErrorMessage = "Surname must be between 3 and 30 characters.")]
             string surname
@@ -171,10 +190,14 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces(MediaTypeNames.Application.Json)]
-        [Consumes(MediaTypeNames.Application.Json)]
+        //[Consumes(MediaTypeNames.Application.Json)] - error for some reason. Changed to plain text. Remeber - pass plain string, not JSON anymore
+        [Consumes(MediaTypeNames.Text.Plain)]
         public IActionResult UpdatePersonSocSecNumber
             ([FromRoute] int personId,
-            [FromForm] string socSecNumber
+            [FromBody]
+            [RegularExpression(@"^\d{11}$", ErrorMessage = "SocialSecurityNumber must be exactly 11 numeric characters.")]
+            [StringLength(11, ErrorMessage = "SocialSecurityNumber must be exactly 11 characters.")]
+        string socSecNumber
             )
         {
             _logger.LogInformation($"Updating {nameof(socSecNumber)} details to {socSecNumber} for user (id: {personId})");
@@ -200,8 +223,15 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces(MediaTypeNames.Application.Json)]
-        [Consumes(MediaTypeNames.Application.Json)]
-        public IActionResult UpdatePersonPhoneNumber([FromRoute] int personId, [FromForm] string phoneNumber)
+        //[Consumes(MediaTypeNames.Application.Json)] - error for some reason. Changed to plain text. Remeber - pass plain string, not JSON anymore
+        [Consumes(MediaTypeNames.Text.Plain)]
+        public IActionResult UpdatePersonPhoneNumber(
+            [FromRoute] int personId,
+            [FromBody]
+            [RegularExpression(@"^\d{11}$", ErrorMessage = "Phonenumber must be exactly 12 numeric characters.")]
+            [StringLength(12, ErrorMessage = "Phonenumber must be exactly 12 characters.")]
+        string phoneNumber
+            )
         {
             _logger.LogInformation($"Updating {nameof(phoneNumber)} details to {phoneNumber} for user (id: {personId})");
 
@@ -225,10 +255,14 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces(MediaTypeNames.Application.Json)]
-        [Consumes(MediaTypeNames.Application.Json)]
+        //[Consumes(MediaTypeNames.Application.Json)] //- error for some reason. Changed to plain text. Remeber - pass plain string, not JSON anymore
+        [Consumes(MediaTypeNames.Text.Plain)]
         public IActionResult UpdatePersonEmail
             ([FromRoute] int personId,
-            [FromForm][EmailAddress(ErrorMessage = "Invalid email address.")] string email
+            [FromBody] // - siusti ne json o string
+            //[FromForm] - error
+            [EmailAddress(ErrorMessage = "Invalid email address.")] string email
+
             )
         {
             _logger.LogInformation($"Updating {nameof(email)} details to {email} for user (id: {personId})");
@@ -247,29 +281,30 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
             return NoContent();
         }
 
+
+        //this is bad, it should work with picture, not with id
         [HttpPut("{personId}/updatePersonImage")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces(MediaTypeNames.Application.Json)]
-        [Consumes(MediaTypeNames.Application.Json)]
-
-
-        public IActionResult UpdatePersonImage([FromRoute] int personId, [FromForm][EmailAddress] int profilePictureId)
+        //[Consumes(MediaTypeNames.Application.Json)]        
+        public IActionResult UpdatePersonImage([FromRoute] int personId, [FromForm] int profilePictureId)
         {
             _logger.LogInformation($"Updating profile picture for user (id: {personId})");
             // kviesti image servise - GetImage - gaunu int
-            var entity = _personRepository.GetPersonByPersonId(personId);
+            var personWhosePicIdToChange = _personRepository.GetPersonByPersonId(personId);
+            var imageToChange = _imageFileService.GetImage(profilePictureId);
 
-            if (entity == null)
+            if (personWhosePicIdToChange == null)
             {
                 _logger.LogInformation($"Person with id {personId} was not found");
                 return NotFound();
             }
 
-            entity.ProfilePictureId = profilePictureId;
-            _personRepository.UpdatePerson(entity);
+            personWhosePicIdToChange.ProfilePictureId = profilePictureId;
+            _personRepository.UpdatePerson(personWhosePicIdToChange);
 
             return NoContent();
         }

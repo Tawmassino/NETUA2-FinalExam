@@ -26,7 +26,7 @@ namespace FE_BE._DATA.DB_Repositories
             _imageDbContext.Images.Add(image);
             _imageDbContext.SaveChanges();
             _logger.LogInformation($"Image {image.FileName} (ID: {image.Id}) has been successfully added to the database ");
-            return image.Id;
+            return (int)image.Id;
         }
 
         public ImageFile GetImage(int id)

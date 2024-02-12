@@ -37,5 +37,10 @@
         {
             IsSuccess = isSuccess;
         }
+
+        public UserResponse()
+        {
+
+        }
     }
 }
