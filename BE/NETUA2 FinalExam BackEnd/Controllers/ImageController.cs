@@ -44,11 +44,11 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         // GET: api/<ImageController>
         [HttpGet("GetImage")]
         //[ProducesResponseType(typeof(List<ImageResultDto>), StatusCodes.Status200OK)]
-        [Produces(MediaTypeNames.Application.Json)]
-        public IActionResult GetImage(int imageId)
+        //[Produces(MediaTypeNames.Application.Json)]
+        public IActionResult GetImage([FromRoute] int imageId)
         {
             var imageToGet = _imageFileService.GetImage(imageId);
-            return Ok(imageToGet);
+            return Ok(imageToGet.Content);
         }
 
 

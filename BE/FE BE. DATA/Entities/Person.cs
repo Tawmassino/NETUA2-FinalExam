@@ -19,15 +19,15 @@ namespace FE_BE._DATA.Entities
 
 
         [ForeignKey(nameof(User))]
-        public int UserId { get; set; }//foreign key to user table, atskiras stulpelis, pasako KURI  useri
-        public User User { get; set; }//cia pasakome kad yra  User tipo lentele, cia ne stuleplis, CIA DEL MUSU PATOGUMO, neegzistuoja DB, nuorodoa KAIP uzkrauti useri
+        public int UserId { get; set; }//foreign key to user table, column , says which  user
+        public User User { get; set; }// table with User type, not a column, convenience only, doesnt exist in database, reference how to load user
         //amzinas ciklas
 
 
-        //delete
+        //Location depends on Person, not vice versa
         //[ForeignKey(nameof(LivingLocation))]
-        //public int? UserLocationId { get; set; }//nurodo foreign key i location lentele, atskiras stulpelis, pasako KURI  useri
-        //public LivingLocation? LivingLocation { get; set; }//cia pasakome kad yra  location  tipo lentele, cia ne stuleplis, CIA DEL MUSU PATOGUMO, neegzistuoja DB, nuorodoa KAIP uzkrauti useri
+        //public int? UserLocationId { get; set; }//foreign key to location table, column , says which  user
+        //public LivingLocation? LivingLocation { get; set; }//table with Location type, not a column, convenience only, doesnt exist in database, reference how to load user
 
 
 

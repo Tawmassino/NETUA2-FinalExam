@@ -1,4 +1,7 @@
-﻿namespace NETUA2_FinalExam_BackEnd.DTOs.LocationDTOs
+﻿using FE_BE._DATA.Entities;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace NETUA2_FinalExam_BackEnd.DTOs.LocationDTOs
 {
     public class LocationGetDTO
     {
@@ -8,6 +11,8 @@
         public string Country { get; set; }
 
 
+        [ForeignKey(nameof(Person))]
         public int PersonId { get; set; }
+        public Person Person { get; set; }
     }
 }

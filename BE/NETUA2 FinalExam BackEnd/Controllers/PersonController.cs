@@ -41,11 +41,7 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
 
 
 
-        //IMAGE?
-        //  fail: Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware[1] //An unhandled exception has occurred while executing the request.
-        //System.InvalidOperationException: Unable to resolve service for type 'FE_BE._BUSINESS.BL_Services.BL_Interfaces.IImageFileService' while attempting to activate 'NETUA2_FinalExam_BackEnd.Controllers.PersonController'.
 
-        //local storage?
 
 
 
@@ -126,10 +122,10 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Produces(MediaTypeNames.Application.Json)]
-        //[Consumes(MediaTypeNames.Multipart.FormData)]//data from form
-        //[Consumes(MediaTypeNames.Application.Json)] - error for some reason. Changed to plain text. Remeber - pass plain string, not JSON anymore
-        [Consumes(MediaTypeNames.Text.Plain)]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [Produces(MediaTypeNames.Text.Plain)]        
+        ////[Consumes(MediaTypeNames.Multipart.FormData)]//data from form
+        ////[Consumes(MediaTypeNames.Application.Json)] - error for some reason. Changed to plain text. Remeber - pass plain string, not JSON anymore        
         public IActionResult UpdatePersonName
             ([FromRoute] int personId,
             [FromBody] [Required(ErrorMessage = "Name is required.")]//required uztenka
@@ -157,9 +153,10 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Produces(MediaTypeNames.Application.Json)]
-        //[Consumes(MediaTypeNames.Application.Json)] - error for some reason. Changed to plain text. Remeber - pass plain string, not JSON anymore
-        [Consumes(MediaTypeNames.Text.Plain)]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [Produces(MediaTypeNames.Text.Plain)]
+        ////[Consumes(MediaTypeNames.Multipart.FormData)]//data from form
+        ////[Consumes(MediaTypeNames.Application.Json)] - error for some reason. Changed to plain text. Remeber - pass plain string, not JSON anymore 
         public IActionResult UpdatePersonSurname
             ([FromRoute] int personId,
             [FromBody][Required(ErrorMessage = "Surname is required.")]
@@ -189,9 +186,10 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Produces(MediaTypeNames.Application.Json)]
-        //[Consumes(MediaTypeNames.Application.Json)] - error for some reason. Changed to plain text. Remeber - pass plain string, not JSON anymore
-        [Consumes(MediaTypeNames.Text.Plain)]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [Produces(MediaTypeNames.Text.Plain)]
+        ////[Consumes(MediaTypeNames.Multipart.FormData)]//data from form
+        ////[Consumes(MediaTypeNames.Application.Json)] - error for some reason. Changed to plain text. Remeber - pass plain string, not JSON anymore 
         public IActionResult UpdatePersonSocSecNumber
             ([FromRoute] int personId,
             [FromBody]
@@ -222,9 +220,10 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Produces(MediaTypeNames.Application.Json)]
-        //[Consumes(MediaTypeNames.Application.Json)] - error for some reason. Changed to plain text. Remeber - pass plain string, not JSON anymore
-        [Consumes(MediaTypeNames.Text.Plain)]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [Produces(MediaTypeNames.Text.Plain)]
+        ////[Consumes(MediaTypeNames.Multipart.FormData)]//data from form
+        ////[Consumes(MediaTypeNames.Application.Json)] - error for some reason. Changed to plain text. Remeber - pass plain string, not JSON anymore 
         public IActionResult UpdatePersonPhoneNumber(
             [FromRoute] int personId,
             [FromBody]
@@ -254,9 +253,10 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Produces(MediaTypeNames.Application.Json)]
-        //[Consumes(MediaTypeNames.Application.Json)] //- error for some reason. Changed to plain text. Remeber - pass plain string, not JSON anymore
-        [Consumes(MediaTypeNames.Text.Plain)]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [Produces(MediaTypeNames.Text.Plain)]
+        ////[Consumes(MediaTypeNames.Multipart.FormData)]//data from form
+        ////[Consumes(MediaTypeNames.Application.Json)] - error for some reason. Changed to plain text. Remeber - pass plain string, not JSON anymore 
         public IActionResult UpdatePersonEmail
             ([FromRoute] int personId,
             [FromBody] // - siusti ne json o string

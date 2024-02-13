@@ -8,7 +8,7 @@ namespace NETUA2_FinalExam_BackEnd.DTOs.PersonDTOs
         public string? Surname { get; set; }
         public string? SocialSecurityNumber { get; set; }
         public string? PhoneNumber { get; set; }
-        [EmailAddress] public string? Email { get; set; }
+        public string? Email { get; set; }
 
         public int UserId { get; set; }
 

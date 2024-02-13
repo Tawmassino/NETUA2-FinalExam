@@ -27,13 +27,14 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         public LivingLocationController(
             ILogger<LivingLocationController> logger,
             ILivingLocationRepository livingLocationRepository,
-            IUserService userService, ILocationMapper locationMapper
+            IUserService userService, ILocationMapper locationMapper, IPersonRepository personRepository
             )
         {
             _logger = logger;
             _livingLocationRepository = livingLocationRepository;
             _userService = userService;
             _locationMapper = locationMapper;
+            _personRepository = personRepository;
         }
 
         // ======================= METHODS =======================

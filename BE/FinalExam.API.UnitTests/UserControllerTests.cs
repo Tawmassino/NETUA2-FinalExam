@@ -11,7 +11,7 @@ using NETUA2_FinalExam_BackEnd.DTOs.UserDTOs;
 
 namespace FinalExam.API.UnitTests
 {
-    public class UnitTest1
+    public class UserControllerTests
     {
 
         // Mock dependencies

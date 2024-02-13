@@ -18,57 +18,6 @@ namespace FinalExam.API.UnitTests
 {
     public class PersonControllerTests
     {
-        //[Fact]
-        //public void GetPersonInfoFromUser_ReturnsPerson()
-        //{
-        //    // Arrange
-        //    var userId = 1;
-        //    var userServiceMock = new Mock<IUserService>();
-        //    userServiceMock.Setup(service => service.GetCurrentUserId()).Returns(userId);
-
-        //    var loggerMock = new Mock<ILogger<PersonController>>();
-        //    var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-        //    var personRepositoryMock = new Mock<IPersonRepository>();
-        //    var personMapperMock = new Mock<IPersonMapper>();
-        //    var imageFileServiceMock = new Mock<IImageFileService>();
-
-        //    //su httpContextAccessorMock
-        //    //taip: userServiceMock.Setup(service => service.GetCurrentUserId()).Returns(personId);
-
-
-        //    var claims = new List<Claim>
-        //    {
-        //        new Claim(ClaimTypes.NameIdentifier, userId.ToString() ) ,
-        //        new Claim(ClaimTypes.Name, "Test"),
-        //        new Claim(ClaimTypes.Email, "test@example.com")
-
-        //    };
-        //    var identity = new ClaimsIdentity(claims);
-        //    var principal = new ClaimsPrincipal(identity);
-
-
-        //    httpContextAccessorMock.Setup(x => x.HttpContext).Returns(new Mock<HttpContext>().Object);
-        //    httpContextAccessorMock.Setup(x => x.HttpContext.User).Returns(principal);
-
-        //    var sut = new PersonController(
-        //        loggerMock.Object,
-        //        httpContextAccessorMock.Object,
-        //        userServiceMock.Object,
-        //        personRepositoryMock.Object,
-        //        personMapperMock.Object,
-        //        imageFileServiceMock.Object
-        //    );
-
-        //    //nera setup su var imageFileServiceMock = new Mock<IImageFileService>();
-
-        //    // Act
-        //    var result = sut.GetPersonInfoFromUser();
-
-        //    // Assert
-        //    var okResult = Assert.IsType<OkObjectResult>(result);
-        //    var person = Assert.IsType<Person>(okResult.Value);
-        //    Assert.Equal(userId, person.UserId);
-        //}
 
         [Fact]
         public void DeletePerson_ReturnsNoContent()

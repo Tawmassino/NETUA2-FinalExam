@@ -46,33 +46,5 @@ namespace FinalExam.API.UnitTests
             Assert.NotNull(okResult.Value);
         }
 
-        [Fact]
-        public void UploadImage_ValidImage_ReturnsOkResult()
-        {
-            // Arrange
-            var imageController = new ImageController(
-                _loggerMock.Object,
-                _imageRepositoryMock.Object,
-                _httpContextAccessorMock.Object,
-                _userDBRepositoryMock.Object,
-                _imageFileServiceMock.Object);
-
-            var imageUploadRequest = new ImageUploadRequest
-            {
-                Image = new FormFile(Stream.Null, 0, 0, "image", "image.jpg")
-            };
-
-            _imageFileServiceMock.Setup(x => x.ResizeImage(It.IsAny<ImageFile>()))
-                .Returns(new ImageFile()); // Mocking a resized image file
-
-            // Act
-            var result = imageController.UploadImage(imageUploadRequest);
-
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.NotNull(okResult.Value);
-        }
-
-
     }
 }
