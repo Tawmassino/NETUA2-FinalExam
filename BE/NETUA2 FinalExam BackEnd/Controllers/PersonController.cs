@@ -62,7 +62,10 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
                 return NotFound();
 
             }
-            var imageToGet = _imageFileService.GetImage(person.ProfilePictureId);
+            if (person.ProfilePictureId != null)
+            {
+                var imageToGet = _imageFileService.GetImage((int)person.ProfilePictureId);
+            }
 
             return Ok(person);
         }
@@ -98,8 +101,9 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         [HttpPost("CreateNewPerson")]
         public IActionResult CreateNewPerson([FromBody] PersonCreateDTO request)
         {
+            var userId = _userService.GetCurrentUserId();
             //mapper dto -> person
-            var newPerson = _personMapper.Map(request, request.UserId);
+            var newPerson = _personMapper.Map(request, userId);
 
             //FOR LATER --- IMPLEMENT UPLOAD PIC
             //var personImageId = _imageFileService.AddImage(newPerson.ProfilePicture);// Uploading picture, getting the picture ID
@@ -108,6 +112,7 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
             //newPerson.UserId = request.UserId;// already in the mapper
 
             //create person
+
             _userService.CreateNewPerson(newPerson);//send to service and then to DataBase
 
             return Ok();
@@ -123,7 +128,7 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Consumes(MediaTypeNames.Application.Json)]
-        [Produces(MediaTypeNames.Text.Plain)]        
+        [Produces(MediaTypeNames.Text.Plain)]
         ////[Consumes(MediaTypeNames.Multipart.FormData)]//data from form
         ////[Consumes(MediaTypeNames.Application.Json)] - error for some reason. Changed to plain text. Remeber - pass plain string, not JSON anymore        
         public IActionResult UpdatePersonName
@@ -282,7 +287,7 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         }
 
 
-        //this is bad, it should work with picture, not with id
+
         [HttpPut("{personId}/updatePersonImage")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

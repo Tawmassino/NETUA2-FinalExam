@@ -8,6 +8,8 @@ using System.Net.Mime;
 using System.Drawing;
 using FE_BE._DATA.DB_Repositories;
 using Microsoft.AspNetCore.Http.HttpResults;
+using FE_BE._DATA.DB_Repositories.DB_Interfaces;
+using System.Security.Claims;
 
 
 
@@ -25,19 +27,22 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUserDBRepository _userDBRepository;
         private readonly IImageFileService _imageFileService;
+        private readonly IPersonRepository _personRepository;
 
         public ImageController(
             ILogger<ImageController> logger,
             IImageRepository imageRepository,
             IHttpContextAccessor httpContextAccessor,
             IUserDBRepository userDBRepository,
-            IImageFileService imageFileService)
+            IImageFileService imageFileService,
+            IPersonRepository personRepository)
         {
             _logger = logger;
             _imageRepository = imageRepository;
             _httpContextAccessor = httpContextAccessor;
             _userDBRepository = userDBRepository;
             _imageFileService = imageFileService;
+            _personRepository = personRepository;
         }
 
         // ==================== methods ====================
@@ -75,6 +80,12 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
                 // Resize the image and add it to the repository
                 var resizedImageFile = _imageFileService.ResizeImage(imageFile);
                 var addedResizedImageFile = _imageFileService.GetImage(_imageFileService.AddImage(resizedImageFile));
+
+                //update person image id
+                var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var personToUpdate = _personRepository.GetPersonByUserId(int.Parse(userId));
+                personToUpdate.ProfilePictureId = addedResizedImageFile.Id;
+                _personRepository.UpdatePerson(personToUpdate);
 
                 return Ok(addedResizedImageFile);
             }

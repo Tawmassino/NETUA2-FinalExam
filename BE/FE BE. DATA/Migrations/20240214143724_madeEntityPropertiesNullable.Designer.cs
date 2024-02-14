@@ -4,6 +4,7 @@ using FE_BE._DATA;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FE_BE._DATA.Migrations
 {
     [DbContext(typeof(FinalExamDbContext))]
-    partial class FinalExamDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240214143724_madeEntityPropertiesNullable")]
+    partial class madeEntityPropertiesNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -106,7 +109,7 @@ namespace FE_BE._DATA.Migrations
                     b.Property<string>("Surname")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -169,9 +172,7 @@ namespace FE_BE._DATA.Migrations
 
                     b.HasOne("FE_BE._DATA.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("ProfilePicture");
 

@@ -30,7 +30,7 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
                 PhoneNumber = dto.PhoneNumber,
                 Email = dto.Email,
                 UserId = userId,
-                ProfilePicture = imageFile,
+                //ProfilePicture = imageFile, - sukuria null
             };
 
 

@@ -136,8 +136,18 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
         public LivingLocation GetCurrentLivingLocation()
         {
             var userId = GetCurrentUserId();
-            Person person = _personRepository.GetPersonByUserId(userId);
-            LivingLocation location = _locationRepository.GetLocationByPersonId(person.Id);
+
+            Person? person = _personRepository.GetPersonByUserId(userId);
+            if (person == null)
+            {
+                return null;
+            }
+
+            LivingLocation? location = _locationRepository.GetLocationByPersonId(person.Id);
+            if (location == null)
+            {
+                return null;//galima padaryt new Car car = new Car;
+            }
 
             return location;
         }

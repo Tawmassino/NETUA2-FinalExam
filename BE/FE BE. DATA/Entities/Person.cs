@@ -11,10 +11,10 @@ namespace FE_BE._DATA.Entities
     public class Person
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Surname { get; set; }
-        public string SocialSecurityNumber { get; set; }
-        public string PhoneNumber { get; set; }
+        public string? Name { get; set; }
+        public string? Surname { get; set; }
+        public string? SocialSecurityNumber { get; set; }
+        public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
 
 
@@ -32,7 +32,7 @@ namespace FE_BE._DATA.Entities
 
 
         [ForeignKey(nameof(ProfilePicture))]
-        public int ProfilePictureId { get; set; }
+        public int? ProfilePictureId { get; set; }
         public ImageFile? ProfilePicture { get; set; }
 
     }

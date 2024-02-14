@@ -12,7 +12,7 @@ namespace NETUA2_FinalExam_BackEnd.DTOs.LocationDTOs
 
 
         [ForeignKey(nameof(Person))]
-        public int PersonId { get; set; }
-        public Person Person { get; set; }
+        public int? PersonId { get; set; }
+        public Person? Person { get; set; }
     }
 }

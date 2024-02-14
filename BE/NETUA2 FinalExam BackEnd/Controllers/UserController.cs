@@ -115,5 +115,12 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
             return NoContent();
         }
 
+        [HttpGet("GetCurrentUserId")]
+        public IActionResult GetCurrentUserId()
+        {
+            int userId = _userService.GetCurrentUserId();
+            return Ok(userId);
+        }
+
     }
 }

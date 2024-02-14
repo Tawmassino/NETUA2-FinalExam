@@ -40,7 +40,7 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
             {
                 City = location.City,
                 StreetName = location.StreetName,
-                HouseNumber = location.HouseNumber,
+                HouseNumber = (int)location.HouseNumber,
                 Country = location.Country,
                 PersonId = location.PersonId,
             };
