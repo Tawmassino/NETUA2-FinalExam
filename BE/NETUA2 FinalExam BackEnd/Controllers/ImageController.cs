@@ -10,12 +10,14 @@ using FE_BE._DATA.DB_Repositories;
 using Microsoft.AspNetCore.Http.HttpResults;
 using FE_BE._DATA.DB_Repositories.DB_Interfaces;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 
 
 
 namespace NETUA2_FinalExam_BackEnd.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -28,11 +30,7 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         private readonly IUserDBRepository _userDBRepository;
         private readonly IImageFileService _imageFileService;
         private readonly IPersonRepository _personRepository;
-        private ILogger<ImageController> object1;
-        private IImageRepository object2;
-        private IHttpContextAccessor object3;
-        private IUserDBRepository object4;
-        private IImageFileService object5;
+
 
         public ImageController(
             ILogger<ImageController> logger,
@@ -50,14 +48,7 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
             _personRepository = personRepository;
         }
 
-        public ImageController(ILogger<ImageController> object1, IImageRepository object2, IHttpContextAccessor object3, IUserDBRepository object4, IImageFileService object5)
-        {
-            this.object1 = object1;
-            this.object2 = object2;
-            this.object3 = object3;
-            this.object4 = object4;
-            this.object5 = object5;
-        }
+
 
         // ==================== methods ====================
         // GET: api/<ImageController>
@@ -97,7 +88,18 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
 
                 //update person image id
                 var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+                //Object reference not set to an instance of an object.'????
+
                 var personToUpdate = _personRepository.GetPersonByUserId(int.Parse(userId));
+                if (personToUpdate == null) // sitas pataisytas !
+                {
+                    return NotFound();
+                }
+                if (personToUpdate != null)
+                {
+                    return NoContent();
+                }
                 personToUpdate.ProfilePictureId = addedResizedImageFile.Id;
                 _personRepository.UpdatePerson(personToUpdate);
 
