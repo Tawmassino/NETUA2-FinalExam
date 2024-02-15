@@ -34,7 +34,7 @@ namespace FinalExam.API.UnitTests
             var locationRepositoryMock = new Mock<ILivingLocationRepository>();
 
             var userService = new UserService(
-                null, // Mock IHttpContextAccessor as needed
+                null, // Mock IHttpContextAccessor? 
                 userDBRepositoryMock.Object,
                 loggerMock.Object,
                 jwtServiceMock.Object,
@@ -48,7 +48,6 @@ namespace FinalExam.API.UnitTests
             Assert.True(response.IsSuccess);
             Assert.Equal("User newuser has been created successfully with ID: 1", response.Message);
         }
-
-        // Additional tests for other methods can be added similarly
+                
     }
 }

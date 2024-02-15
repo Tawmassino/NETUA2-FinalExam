@@ -28,6 +28,11 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         private readonly IUserDBRepository _userDBRepository;
         private readonly IImageFileService _imageFileService;
         private readonly IPersonRepository _personRepository;
+        private ILogger<ImageController> object1;
+        private IImageRepository object2;
+        private IHttpContextAccessor object3;
+        private IUserDBRepository object4;
+        private IImageFileService object5;
 
         public ImageController(
             ILogger<ImageController> logger,
@@ -43,6 +48,15 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
             _userDBRepository = userDBRepository;
             _imageFileService = imageFileService;
             _personRepository = personRepository;
+        }
+
+        public ImageController(ILogger<ImageController> object1, IImageRepository object2, IHttpContextAccessor object3, IUserDBRepository object4, IImageFileService object5)
+        {
+            this.object1 = object1;
+            this.object2 = object2;
+            this.object3 = object3;
+            this.object4 = object4;
+            this.object5 = object5;
         }
 
         // ==================== methods ====================

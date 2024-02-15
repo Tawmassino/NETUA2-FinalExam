@@ -54,6 +54,11 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
             var userId = user.Id;
             role = user?.Role;
 
+            if (userId == null)
+            {
+                return (false, null);
+            }
+
             if (user == null)
             {
                 _logger.LogWarning($"Username or password does not match");
@@ -107,10 +112,6 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
             _logger.LogInformation($"Creating a person with ID: {newPersonData.Id} and userID: {newPersonData.UserId}");
             //newPersonData.UserId = userId;
 
-            //Person newPerson = (new Person
-            //{//    Name = newPersonData.Name,//    Surname = newPersonData.Surname,//    SocialSecurityNumber = newPersonData.SocialSecurityNumber,
-            //    PhoneNumber = newPersonData.PhoneNumber,//    Email = newPersonData.Email,//    UserId = userId,
-            //    //UserLocationId = null,//    ProfilePictureId = personImageId,//});
 
             _logger.LogInformation($"Person with ID: {newPersonData.Id} and userID: {newPersonData.UserId} has been successfully created.");
 
@@ -178,31 +179,3 @@ namespace NETUA2_FinalExam_BackEnd.API_Services
         }
     }
 }
-
-// ========================= OBSOLETE =============
-//public UserResponse Login(string username, string password, out string role)//UserResponse graziname tik controller, cia to nereikia
-//{
-
-//    //tuple - su bool ir useriu
-//    //(bool,User)Login(string username, string password, out string role)
-
-//    var user = _userDBRepository.GetUserByUsername(username);
-//    var userId = user.Id;
-
-//    role = user?.Role;
-//    if (user == null)
-//    {
-//        _logger.LogWarning($"Username or password does not match");
-//        return new UserResponse(false, "Username or password does not match");
-//    };
-
-//    if (!VerifyPasswordHash(password, user.Password, user.PasswordSalt))
-//    {
-//        _logger.LogWarning($"Username or password does not match");
-//        return new UserResponse(false, "Username or password does not match");
-//    }
-//    _logger.LogInformation($"User logged in");
-//    //var jwt = _jwtService.GetJwtToken(user.Username, user.Role, user.Id);
-//    //turetu grazint nullable user, jei pavyko, jei nepavyko null
-//    return new UserResponse(true, "User logged in", userId);
-//}

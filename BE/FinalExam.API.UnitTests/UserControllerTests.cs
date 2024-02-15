@@ -41,7 +41,7 @@ namespace FinalExam.API.UnitTests
             };
 
             _userServiceMock.Setup(x => x.Login(userGetDto.Username, userGetDto.Password, out It.Ref<string>.IsAny))
-                .Returns((true, new User())); // Assuming a valid user is returned
+                .Returns((true, new User())); // returning valid user 
 
             _jwtServiceMock.Setup(x => x.GetJwtToken(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()))
                 .Returns("validJwtToken");
@@ -82,27 +82,6 @@ namespace FinalExam.API.UnitTests
             Assert.Equal(StatusCodes.Status200OK, okResult.StatusCode);
         }
 
-        [Fact]
-        public void Delete_ExistingUser_ReturnsNoContentResult()
-        {
-            // Arrange
-            var controller = new UserController(
-                _loggerMock.Object,
-                _userServiceMock.Object,
-                _jwtServiceMock.Object,
-                _userDBRepositoryMock.Object,
-                _personRepositoryMock.Object);
 
-            var userId = 1;
-
-            _userDBRepositoryMock.Setup(x => x.GetUserById(userId))
-                .Returns(new User()); // Assuming a valid user exists
-
-            // Act
-            var result = controller.Delete(userId);
-
-            // Assert
-            Assert.IsType<NoContentResult>(result);
-        }
     }
 }

@@ -44,8 +44,8 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         /// <summary>
         /// creates a location.
         /// </summary>
-        /// <param name="locationId"></param>
-        /// <returns></returns>
+        /// <param name="request">The LocationCreateDTO object containing location information.</param>
+        /// <returns>IActionResult</returns>
         [HttpPost("CreateNewLocation")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -89,7 +89,10 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
             return Ok();
         }
 
-
+        /// <summary>
+        /// Retrieves location information associated with the current user's person.
+        /// </summary>
+        /// <returns>IActionResult</returns>
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(Person), StatusCodes.Status200OK)]
         [HttpGet("GetLocationInfoFromPerson")]
@@ -109,28 +112,31 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         /// removes a location.
         /// </summary>
         /// <param name="locationId"></param>
-        /// <returns></returns>
+        /// <returns>IActionResult </returns>
         [HttpDelete("{locationId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult DeleteLocation(int locationId)
         {
-            int personToDeleteId = _userService.GetCurrentUserId();// USER SERVICE in PERSON CONTROLLER??? 
+            int personToDeleteId = _userService.GetCurrentUserId();
             if (personToDeleteId == null)
             {
                 _logger.LogInformation($"Account ID {personToDeleteId} not found");
                 return NotFound();
             }
-            _personRepository.DeletePersonById(personToDeleteId);// PERSON SERVICE
+            _personRepository.DeletePersonById(personToDeleteId);
             return NoContent();
 
         }
 
-        //    // ======================= UPDATE METHODS =======================
+        // ======================= UPDATE METHODS =======================
 
-        //    //UpdateLocationCity
-
-
+        /// <summary>
+        /// Updates the city of a location.
+        /// </summary>
+        /// <param name="locationId">The ID of the location to be updated.</param>
+        /// <param name="locationCity">The new city value for the location.</param>
+        /// <returns>IActionResult</returns>
         [HttpPut("{locationId}/updateLocationCity")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -154,7 +160,12 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         }
 
 
-        //    //UpdateLocationStreetName
+        /// <summary>
+        /// Updates the street name of a location.
+        /// </summary>
+        /// <param name="locationId">The ID of the location to be updated.</param>
+        /// <param name="locationStreetName">The new street name value for the location.</param>
+        /// <returns>IActionResult</returns>
         [HttpPut("{locationId}/updateLocationStreetName")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -178,7 +189,12 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         }
 
 
-        //    //UpdateLocationHouseNumber
+        /// <summary>
+        /// Updates the house number of a location.
+        /// </summary>
+        /// <param name="locationId">The ID of the location to be updated.</param>
+        /// <param name="locationHouseNumber">The new house number value for the location.</param>
+        /// <returns>IActionResult</returns>
         [HttpPut("{locationId}/updateLocationHouseNumber")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -202,7 +218,12 @@ namespace NETUA2_FinalExam_BackEnd.Controllers
         }
 
 
-        //    //UpdateLocationCountry
+        /// <summary>
+        /// Updates the country of a location.
+        /// </summary>
+        /// <param name="locationId">The ID of the location to be updated.</param>
+        /// <param name="locationCountry">The new country value for the location.</param>
+        /// <returns>IActionResult</returns>
         [HttpPut("{locationId}/updateLocationCountry")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
